@@ -37,6 +37,23 @@
         port: '80'
         proto: tcp
 
+    - name: Check Listening
+      ansible.builtin.wait_for:
+        port: 80
+        state: "started"
+        timeout: 400
+
+    - name: Check If Working
+      ansible.builtin.uri:
+        url: "http://localhost"
+        return_content: true
+      delegate_to: "localhost"
+      register: "r_working"
+
+    - name: Check content
+      ansible.builtin.assert:
+        that: "'Hello' in r_working.content"
+
   handlers:
     - name: Restart Nginx
       service:
