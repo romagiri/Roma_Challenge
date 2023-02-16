@@ -1,5 +1,5 @@
 - name: Setup nginx and the HTML sample file
-  hosts: all
+  hosts: app
   become: yes
   vars:
     server_name: "{{ ansible_default_ipv4.address }}"
@@ -18,6 +18,11 @@
         dest: "{{ document_root }}"
         mode: preserve
 
+    - name: Copy self Signed SSL files
+      copy:
+        src: files/self-signed.conf 
+        dest: /etc/nginx/snippets/self-signed.conf
+
     - name: Apply Nginx template
       template:
         src: files/nginx.conf.j2
@@ -35,6 +40,12 @@
       ufw:
         rule: allow
         port: '80'
+        proto: tcp
+
+    - name: Allow all access to tcp port 443
+      ufw:
+        rule: allow
+        port: '443'
         proto: tcp
 
   handlers:
