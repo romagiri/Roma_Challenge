@@ -1,2 +1,2 @@
-[webserver]
-13.59.186.123
+[app]
+13.59.186.123 ansible_user=ubuntu ansible_connection=local

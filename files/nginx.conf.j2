@@ -5,9 +5,25 @@ server {
   index index.html index.htm;
 
   server_name {{ server_name }};
+  return 302 https://{{ server_name }};
   
   location / {
    default_type "text/html";
    try_files $uri.html $uri $uri/ =404;
   }
+}
+
+server {
+    listen 443 ssl http2 default_server;
+    listen [::]:443 ssl http2 default_server;
+    server_name {{ server_name }};
+
+    include snippets/self-signed.conf;
+    include snippets/ssl-params.conf;
+    root {{ document_root }}/{{ app_root }};
+
+    location / {
+      default_type "text/html";
+      try_files $uri.html $uri $uri/ =404;
+    }
 }
